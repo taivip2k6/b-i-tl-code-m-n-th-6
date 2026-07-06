@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Quest v2</title>
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg: #07131f;
+            --panel: rgba(8, 20, 37, 0.92);
+            --accent: #f4b400;
+            --accent-2: #5dd0ff;
+            --text: #eef4ff;
+            --muted: #9db2c8;
+            --success: #4caf50;
+            --danger: #ff6b6b;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #07131f, #12263f 45%, #0b1a2f);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            width: min(920px, 100%);
+            background: var(--panel);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 18px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.35);
+            padding: 24px;
+        }
+        h1, h2 { color: var(--accent); }
+        .screen { display: none; }
+        .screen.active { display: block; }
+        .panel { background: rgba(255,255,255,0.04); border-radius: 14px; padding: 16px; margin-top: 14px; }
+        .message { margin-top: 12px; padding: 12px; border-radius: 10px; display: none; }
+        .message.success { display: block; background: rgba(76, 175, 80, 0.2); color: #dff6de; }
+        .message.error { display: block; background: rgba(255, 107, 107, 0.2); color: #ffe2e2; }
+        .btn { background: linear-gradient(135deg, var(--accent), #ffcf4d); color: #111; border: none; border-radius: 999px; padding: 10px 16px; font-weight: 700; cursor: pointer; }
+        .btn.secondary { background: linear-gradient(135deg, var(--accent-2), #7dc9ff); color: #072138; }
+        input, select, textarea { width: 100%; border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; background: rgba(255,255,255,0.08); color: var(--text); padding: 10px 12px; margin-top: 6px; }
+        .row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+        .stack { display: grid; gap: 8px; }
+        .tiny { color: var(--muted); font-size: 0.95rem; }
+        .ciphertext { padding: 12px; border-radius: 12px; background: rgba(255,255,255,0.07); font-family: Consolas, monospace; white-space: pre-wrap; word-break: break-word; }
+        .badge { display: inline-block; padding: 4px 10px; border-radius: 999px; background: rgba(244,180,0,0.16); color: var(--accent); margin-right: 6px; }
+        .hero { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .list { margin: 0; padding-left: 18px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="login-screen" class="screen active">
+            <div class="hero">
+                <div>
+                    <h1>Crypto Quest v2</h1>
+                    <p class="tiny">Game giáo dục về mật mã học, từ Caesar đến các lỗi thiết kế bảo mật.</p>
+                </div>
+            </div>
+            <div class="panel">
+                <h2>Đăng nhập</h2>
+                <div class="stack">
+                    <label>Tên người chơi<input id="username" placeholder="Nhập tên người chơi"></label>
+                    <label>Mật khẩu<input id="password" type="password" placeholder="Nhập mật khẩu"></label>
+                </div>
+                <div class="row">
+                    <button class="btn" onclick="login()">Đăng nhập</button>
+                    <button class="btn secondary" onclick="showRegister()">Đăng ký</button>
+                </div>
+                <div id="login-message" class="message"></div>
+            </div>
+        </div>
+
+        <div id="register-screen" class="screen">
+            <div class="hero">
+                <div>
+                    <h1>Crypto Quest v2</h1>
+                    <p class="tiny">Tạo tài khoản để lưu điểm và tiến độ chơi.</p>
+                </div>
+            </div>
+            <div class="panel">
+                <h2>Đăng ký</h2>
+                <div class="stack">
+                    <label>Tên người chơi<input id="new-username" placeholder="Nhập tên người chơi"></label>
+                    <label>Mật khẩu<input id="new-password" type="password" placeholder="Nhập mật khẩu"></label>
+                    <label>Xác nhận mật khẩu<input id="confirm-password" type="password" placeholder="Nhập lại mật khẩu"></label>
+                </div>
+                <div class="row">
+                    <button class="btn" onclick="register()">Tạo tài khoản</button>
+                    <button class="btn secondary" onclick="showLogin()">Quay lại đăng nhập</button>
+                </div>
+                <div id="register-message" class="message"></div>
+            </div>
+        </div>
+
+        <div id="menu-screen" class="screen">
+            <div class="hero">
+                <div>
+                    <h1>Crypto Quest v2</h1>
+                    <p class="tiny">Bạn đang ở hành trình tìm kho báu qua các màn giải mã và phát hiện lỗi bảo mật.</p>
+                </div>
+                <div class="badge" id="user-badge">Người chơi</div>
+            </div>
+            <div class="panel">
+                <div class="row">
+                    <button class="btn" onclick="startGame()">Bắt đầu / tiếp tục</button>
+                    <button class="btn secondary" onclick="resetGame()">Đặt lại tiến độ</button>
+                    <button class="btn secondary" onclick="logout()">Đăng xuất</button>
+                </div>
+                <p><strong>Điểm:</strong> <span id="score">0</span> | <strong>Màn hiện tại:</strong> <span id="current-level-display">1</span></p>
+                <h2>Hướng dẫn học tập</h2>
+                <ul class="list">
+                    <li>Mỗi màn chơi có một câu chuyện và một kiến thức cần ghi nhớ.</li>
+                    <li>Hai màn cuối yêu cầu bạn phát hiện lỗi bảo mật, không chỉ giải mã.</li>
+                    <li>Tiến độ và điểm số được lưu tự động trên server.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="game-screen" class="screen">
+            <div class="hero">
+                <div>
+                    <h1 id="level-title">Màn chơi</h1>
+                    <p class="tiny" id="level-story"></p>
+                </div>
+                <div class="badge" id="level-badge">Cấp 1</div>
+            </div>
+            <div class="panel">
+                <p><strong>Điểm:</strong> <span id="game-score">0</span> | <strong>Số lần thử còn lại:</strong> <span id="attempts-left">5</span></p>
+                <h2>Thông điệp</h2>
+                <div id="ciphertext" class="ciphertext"></div>
+                <div class="stack" style="margin-top: 12px;">
+                    <label id="answer-label" for="answer-input">Đáp án</label>
+                    <input id="answer-input" placeholder="Nhập đáp án">
+                    <div id="answer-options"></div>
+                </div>
+                <div class="row">
+                    <button class="btn" onclick="submitAnswer()">Gửi đáp án</button>
+                    <button class="btn secondary" onclick="backToMenu()">Quay về menu</button>
+                </div>
+                <p class="tiny" id="hint"></p>
+                <div id="result-message" class="message"></div>
+                <div class="panel" id="explanation-panel" style="display:none;">
+                    <h3>Kiến thức sau màn chơi</h3>
+                    <p id="explanation-text"></p>
+                    <div class="row">
+                        <button class="btn" id="continue-button" onclick="continueAfterExplanation()" style="display:none;">Tiếp theo</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const state = { user: null, currentLevel: 1, levelData: null, pendingNextLevel: null };
+
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(screen => screen.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        function showMessage(id, text, kind) {
+            const el = document.getElementById(id);
+            el.textContent = text;
+            el.className = `message ${kind}`;
+        }
+
+        function clearMessage(id) {
+            const el = document.getElementById(id);
+            el.textContent = '';
+            el.className = 'message';
+        }
+
+        async function register() {
+            const payload = {
+                username: document.getElementById('new-username').value,
+                password: document.getElementById('new-password').value,
+                confirm_password: document.getElementById('confirm-password').value,
+            };
+            const res = await fetch('/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+            const data = await res.json();
+            if (res.ok) {
+                showMessage('register-message', data.message, 'success');
+                showLogin();
+            } else {
+                showMessage('register-message', data.error || 'Đăng ký thất bại', 'error');
+            }
+        }
+
+        async function login() {
+            const payload = {
+                username: document.getElementById('username').value,
+                password: document.getElementById('password').value,
+            };
+            const res = await fetch('/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+            const data = await res.json();
+            if (res.ok) {
+                state.user = data;
+                await refreshUser();
+                showMenu();
+            } else {
+                showMessage('login-message', data.error || 'Đăng nhập thất bại', 'error');
+            }
+        }
+
+        async function logout() {
+            await fetch('/logout', { method: 'POST' });
+            state.user = null;
+            showLogin();
+        }
+
+        async function refreshUser() {
+            const res = await fetch('/get_user_data');
+            if (!res.ok) {
+                state.user = null;
+                showLogin();
+                return;
+            }
+            const data = await res.json();
+            state.user = data;
+            document.getElementById('user-badge').textContent = data.username;
+            document.getElementById('score').textContent = data.score;
+            document.getElementById('current-level-display').textContent = data.current_level;
+        }
+
+        async function showMenu() {
+            await refreshUser();
+            showScreen('menu-screen');
+        }
+
+        function showLogin() {
+            clearMessage('login-message');
+            clearMessage('register-message');
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            showScreen('login-screen');
+        }
+
+        function showRegister() {
+            clearMessage('login-message');
+            clearMessage('register-message');
+            document.getElementById('new-username').value = '';
+            document.getElementById('new-password').value = '';
+            document.getElementById('confirm-password').value = '';
+            showScreen('register-screen');
+        }
+
+        function showLoginForm() {
+            showLogin();
+        }
+
+        function showRegisterForm() {
+            showRegister();
+        }
+
+        async function startGame() {
+            if (!state.user) {
+                showLogin();
+                return;
+            }
+            await loadLevel(state.user.current_level || 1);
+        }
+
+        async function loadLevel(level) {
+            const res = await fetch(`/level/${level}`);
+            const data = await res.json();
+            if (!res.ok) {
+                showMessage('result-message', data.error || 'Không thể tải màn chơi', 'error');
+                return;
+            }
+            state.currentLevel = level;
+            state.levelData = data;
+            document.getElementById('level-title').textContent = data.title;
+            document.getElementById('level-story').textContent = data.story;
+            document.getElementById('level-badge').textContent = `Màn ${data.level}`;
+            document.getElementById('game-score').textContent = data.points;
+            document.getElementById('attempts-left').textContent = data.attempts_left;
+            document.getElementById('ciphertext').textContent = data.ciphertext;
+            document.getElementById('hint').textContent = `Gợi ý: ${data.hint}`;
+            document.getElementById('answer-label').textContent = data.answer_label;
+            document.getElementById('answer-input').value = '';
+            document.getElementById('answer-input').placeholder = 'Nhập đáp án';
+            const optionsContainer = document.getElementById('answer-options');
+            optionsContainer.innerHTML = '';
+            if (data.input_type === 'select') {
+                document.getElementById('answer-input').style.display = 'none';
+                const select = document.createElement('select');
+                select.id = 'answer-select';
+                data.options.forEach(option => {
+                    const opt = document.createElement('option');
+                    opt.value = option.value;
+                    opt.textContent = option.label;
+                    select.appendChild(opt);
+                });
+                optionsContainer.appendChild(select);
+            } else {
+                document.getElementById('answer-input').style.display = 'block';
+            }
+            clearMessage('result-message');
+            state.pendingNextLevel = null;
+            document.getElementById('explanation-panel').style.display = 'none';
+            document.getElementById('continue-button').style.display = 'none';
+            showScreen('game-screen');
+        }
+
+        async function submitAnswer() {
+            const payload = {
+                ciphertext: state.levelData.ciphertext,
+                param: state.levelData.input_type === 'select' ? document.getElementById('answer-select').value : document.getElementById('answer-input').value,
+            };
+            const res = await fetch(`/decode/${state.currentLevel}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+            const data = await res.json();
+            document.getElementById('attempts-left').textContent = data.attempts_left ?? state.levelData.attempts_left;
+            if (res.ok && data.success) {
+                showMessage('result-message', data.message, 'success');
+                document.getElementById('explanation-text').textContent = data.explanation;
+                document.getElementById('explanation-panel').style.display = 'block';
+                document.getElementById('continue-button').style.display = 'inline-block';
+                state.pendingNextLevel = data.next_level;
+                await refreshUser();
+            } else {
+                showMessage('result-message', data.message || 'Đáp án chưa đúng', 'error');
+            }
+        }
+
+        function continueAfterExplanation() {
+            if (state.pendingNextLevel) {
+                loadLevel(state.pendingNextLevel);
+            } else {
+                showMenu();
+            }
+        }
+
+        async function resetGame() {
+            const res = await fetch('/reset', { method: 'POST' });
+            const data = await res.json();
+            if (res.ok) {
+                await refreshUser();
+                showMessage('result-message', data.message, 'success');
+                showMenu();
+            }
+        }
+
+        function backToMenu() {
+            showMenu();
+        }
+
+        window.onload = async () => {
+            await refreshUser();
+            if (state.user) {
+                showMenu();
+            } else {
+                showLogin();
+            }
+        };
+    </script>
+</body>
+</html>
