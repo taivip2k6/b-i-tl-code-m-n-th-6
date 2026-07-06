@@ -7,10 +7,10 @@ Thanh viên: Trần Hữu Tiến Duy - MSSV: 1871020191 - Lớp: CNTT-1802
 Thanh vien: Lương Thiện Hoàng - MSSV: 1871020255 - Lớp: CNTT-1802 Học phần: Nhập môn An toàn toàn và Bảo mật thông tin Đệ 24: : Đại học Đại Nam
 # BTL.ATBMTT
 
-![![alt text](image-1.png)](https://github.com/user-attachments/assets/74a9f47f-6188-46f0-98d3-abe2bf4f04a8)
-![![alt text](image-2.png)](https://github.com/user-attachments/assets/657a66ae-589b-4bf0-b7dd-bb07e3338f59)
-![![alt text](image.png)](https://github.com/user-attachments/assets/12d296cd-8376-4b47-bab2-e956a4bb5271)
-![![alt text](image-3.png)](https://github.com/user-attachments/assets/c3632626-55a9-4e67-aa95-d9251c5c71c4)
+![alt text](image-1.png)
+![alt text](image-2.png)
+![alt text](image.png)
+![alt text](image-3.png)
 I. Tổng quan về trò chơi
 
 "Giải mã Kho báu" là một trò chơi giải đố, nơi người chơi phải giải mã các thông điệp được mã hóa bằng nhiều thuật toán mật mã khác nhau để tiến bộ qua các cấp độ và kiếm điểm. Mục tiêu là giải mã thành công tất cả các thông điệp để tìm ra kho báu cuối cùng (hoặc đạt cấp độ cao nhất).
