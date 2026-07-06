@@ -4,7 +4,7 @@
 Trường nhom: Bùi Văn Tài - MSSV: 1871020515 - Lớp: CNTT-1802
 Thanh viên: Nguyen Hoang Viet - MSSV: 1871020654 - Lớp: CNTT-1802
 Thanh viên: Trần Hữu Tiến Duy - MSSV: 1871020191 - Lớp: CNTT-1802
-Thanh vien: Lương Thiện Hoàng - MSSV: 1871020255 - Lớp: CNTT-1802 Học phần: Nhập môn An toàn toàn và Bảo mật thông tin Đệ 24: : Đại học Đại Nam
+Thanh vien: Lương Thiện Hoàng - MSSV: 1871020255 - Lớp: CNTT-1802 Học phần: Nhập môn An toàn toàn và Bảo mật thông tin Đệ 24:GIAI MA KHO BAU : Đại học Đại Nam
 # BTL.ATBMTT
 
 ![alt text](image-1.png)
